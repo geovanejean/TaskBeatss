@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             listFromDataBase()
         }
     }
-
+//teste res
     private fun deleteAll(){
         CoroutineScope(IO).launch {
             dao.deleteAll()
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
+//teste teste teste
     private fun deleteById(id: Int){
         CoroutineScope(IO).launch {
             dao.deleteById(id)
