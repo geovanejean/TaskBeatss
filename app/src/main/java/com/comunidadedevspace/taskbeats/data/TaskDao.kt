@@ -1,5 +1,6 @@
 package com.comunidadedevspace.taskbeats.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao //Data Access Objects - the meaning of DAO.
@@ -9,10 +10,8 @@ interface TaskDao {
     fun insert (task: Task)
 
     @Query("Select * from task")
-    fun getAll (): List<Task>
+    fun getAll (): LiveData<List<Task>>
 
-
-    //Uptade: Encontrar pelo ID a tarefa que queremos alterar.
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(task: Task)

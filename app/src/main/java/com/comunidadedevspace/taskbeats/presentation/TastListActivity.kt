@@ -2,7 +2,6 @@ package com.comunidadedevspace.taskbeats.presentation
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -11,38 +10,24 @@ import android.widget.LinearLayout
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.comunidadedevspace.taskbeats.R
-import com.comunidadedevspace.taskbeats.TaskBeatsApplication
-import com.comunidadedevspace.taskbeats.data.AppDataBase
 import com.comunidadedevspace.taskbeats.data.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
-
-
     private lateinit var ctnContent: LinearLayout
-
 
     //Adapter
     private val adapter: TaskListAdapter by lazy {
         TaskListAdapter(::OnListItemClicked)
     }
-
-    lateinit var dataBase :AppDataBase
-
-
-
-    private val dao by lazy {
-        dataBase.taskDao()
+    private val viewModel: TaskListViewModel by lazy {
+        TaskListViewModel.create(application)
     }
-
 
     private val startForResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -51,14 +36,8 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             val taskAction = data?.getSerializableExtra(TASK_ACTION_RESULT) as TaskAction
-            val task: Task = taskAction.task
 
-            when (taskAction.actionType) {
-                ActionType.DELETE.name -> deleteById(task.id)
-                ActionType.CREATE.name -> insertIntoDataBase(task)
-                ActionType.UPDATE.name -> updateIntoDataBase(task)
-
-            }
+            viewModel.execute(taskAction)
         }
     }
 
@@ -66,8 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
         setSupportActionBar(findViewById(R.id.toolbar))
-
-        val dataBase = Room.databaseBuilder(
+    /*    val dataBase = Room.databaseBuilder(
             applicationContext,
             AppDataBase::class.java, "taskbeats-database"
         ).build()
@@ -77,10 +55,9 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(IO).launch {
             val myDataBaseList: List<Task> = dao.getAll()
             adapter.submitList(myDataBaseList)
-        }
+        }*/   //comentei essa parte, pq ao rodar, deu erro, mas olhando o codigo do Roque, essa parte nao existe, mas vou deixar aqui pra ver
 
         ctnContent = findViewById(R.id.ctn_content)
-
 
         //RecyclerView
         val rvTasks: RecyclerView = findViewById(R.id.rv_task_list)
@@ -95,49 +72,31 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
-        dataBase = (application as TaskBeatsApplication).dataBase
-
-        Log.d ("GeoTeste", dataBase.toString())
         listFromDataBase()
     }
 
-    private fun insertIntoDataBase(task: Task){
-        CoroutineScope(IO).launch {
-        dao.insert(task)
-            listFromDataBase()
-        }
-    }
-
-    private fun updateIntoDataBase(task: Task){
-        CoroutineScope(IO).launch {
-            dao.update(task)
-            listFromDataBase()
-        }
-    }
-//teste res
     private fun deleteAll(){
-        CoroutineScope(IO).launch {
-            dao.deleteAll()
-            listFromDataBase()
-        }
-
-    }
-//teste teste teste
-    private fun deleteById(id: Int){
-        CoroutineScope(IO).launch {
-            dao.deleteById(id)
-            listFromDataBase()
-        }
-
+        val taskAction = TaskAction(null, ActionType.DELETE_ALL.name)
+        viewModel.execute(taskAction)
     }
 
     private fun listFromDataBase(){
-        CoroutineScope(IO).launch {
-            val myDataBaseList: List<Task> = dao.getAll()
-            adapter.submitList(myDataBaseList)
+                    //Observer
+            val listObserver = Observer<List<Task>> { listTasks ->
+                if (listTasks.isEmpty()){
+                    ctnContent.visibility = View.VISIBLE
+                }else{
+                    ctnContent.visibility = View.GONE
+                }
+                adapter.submitList(listTasks)
+            }
 
-        }
+            //LiveData
+            // Na aula, o @ dele é o "TaskListActivity", igual o da linha abaixo que foi apagada na aula.
+            viewModel.taskListLiveData.observe(this@MainActivity, listObserver)
+            //Na aula, quando ele insere o "this" o @ dele é a "TaskListActivity", mas no meu, é o "MainActivity" , bora ver se vai dar erro.
+            //dao.getAll().observe(this@MainActivity, listObserver) - Na aula, ele apaga essa linha, mas vou deixar
+        //Erro permancece, qualquer coisa, voltar na parte 10:17
     }
 
     private fun showMessage(view: View, message: String) {
@@ -176,12 +135,13 @@ class MainActivity : AppCompatActivity() {
 
 enum class ActionType {
     DELETE,
+    DELETE_ALL,
     UPDATE,
     CREATE
 }
 
 data class TaskAction(
-    val task: Task,
+    val task: Task?,
     val actionType: String
 ) : Serializable
 
