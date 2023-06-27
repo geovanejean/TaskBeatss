@@ -2,6 +2,8 @@ package com.comunidadedevspace.taskbeats
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -10,19 +12,23 @@ import org.junit.Test
  */
 class ExampleUnitTest {
 
-    private val underTest = MyCountRepositoryImpl()
+    private val mockNumbersProvider: MyNumbersProvider = mock()
+
+    private val underTest = MyCountRepositoryImpl(
+        numbersProvider = mockNumbersProvider
+    )
+
 
     @Test
     fun addition_isCorrect() {
         //Given
-        val p1 = 3
-        val p2 = 2
+        whenever(mockNumbersProvider.getNumber()).thenReturn(2)
 
         //When
-        val result = underTest.sum(p1,p2)
+        val result = underTest.sum()
 
         //Then
-        val expected = 5
+        val expected = 4
         assertEquals(expected, result)
     }
 }
