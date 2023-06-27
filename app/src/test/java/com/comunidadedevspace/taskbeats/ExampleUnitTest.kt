@@ -1,8 +1,7 @@
 package com.comunidadedevspace.taskbeats
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -10,8 +9,20 @@ import org.junit.Assert.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+
+    private val underTest = MyCountRepositoryImpl()
+
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        //Given
+        val p1 = 3
+        val p2 = 2
+
+        //When
+        val result = underTest.sum(p1,p2)
+
+        //Then
+        val expected = 5
+        assertEquals(expected, result)
     }
 }
