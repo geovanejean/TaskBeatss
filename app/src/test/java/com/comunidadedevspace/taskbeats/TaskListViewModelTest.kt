@@ -59,7 +59,9 @@ class TaskListViewModelTest {
         verify(taskDao).update(task)
 
 
-    }@Test
+    }
+
+    @Test
     fun delete_task() = runTest {
         //Given
         val task = Task(
@@ -80,5 +82,7 @@ class TaskListViewModelTest {
         verify(taskDao).deleteById(task.id)
 
 
-    }    }
+    }
+
+}
 
