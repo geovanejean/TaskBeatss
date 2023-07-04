@@ -91,12 +91,8 @@ class TaskListActivity : AppCompatActivity() {
                 adapter.submitList(listTasks)
             }
 
-            //LiveData
-            // Na aula, o @ dele é o "TaskListActivity", igual o da linha abaixo que foi apagada na aula.
-            viewModel.taskListLiveData.observe(this@MainActivity, listObserver)
-            //Na aula, quando ele insere o "this" o @ dele é a "TaskListActivity", mas no meu, é o "MainActivity" , bora ver se vai dar erro.
-            //dao.getAll().observe(this@MainActivity, listObserver) - Na aula, ele apaga essa linha, mas vou deixar
-        //Erro permancece, qualquer coisa, voltar na parte 10:17
+            viewModel.taskListLiveData.observe(this@TaskListActivity, listObserver)
+
     }
 
     private fun showMessage(view: View, message: String) {
