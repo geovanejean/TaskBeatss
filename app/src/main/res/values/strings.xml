@@ -2,6 +2,8 @@
     <string name="app_name">TaskBeats</string>
     <string name="bands">Bandas Preferidas </string>
     <string name="band">Iron Maiden </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

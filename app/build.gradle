@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.comunidadedevspace.taskbeats"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -44,6 +44,10 @@ dependencies {
     def room_version = "2.4.1"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+
+    def fragment_version = "1.5.6"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
     def lifecycle_version = "2.5.0-alpha02"
     def arch_version = "2.1.0"
