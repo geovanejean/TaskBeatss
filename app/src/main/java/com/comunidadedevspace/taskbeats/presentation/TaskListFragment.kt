@@ -32,7 +32,6 @@ class TaskListFragment : Fragment() {
 
          * @return A new instance of fragment TaskListFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
             TaskListFragment()

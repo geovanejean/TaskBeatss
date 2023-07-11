@@ -18,16 +18,25 @@ class MainActivity : AppCompatActivity() {
         val taskListFragment = TaskListFragment.newInstance()
         val newsListFragment = NewsListFragment.newInstance()
 
+        supportFragmentManager.commit {
+            replace(R.id.fragment_container_view, taskListFragment)
+            setReorderingAllowed(true)
+        }
+
         bottomNavView.setOnItemSelectedListener { menuItem ->
             val fragment = when(menuItem.itemId) {
                 R.id.task_list -> taskListFragment
+                R.id.news_list -> newsListFragment
+                else -> taskListFragment
             }
+
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container_view, fragment)
+                setReorderingAllowed(true)
+            }
+            true
         }
 
 
-        supportFragmentManager.commit {
-            add(R.id.fragment_container_view, taskListFragment)
-            setReorderingAllowed(true)
-        }
     }
 }
