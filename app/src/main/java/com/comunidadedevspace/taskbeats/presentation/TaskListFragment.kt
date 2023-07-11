@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.comunidadedevspace.taskbeats.R
-
+import com.comunidadedevspace.taskbeats.data.Task
 
 
 /**
@@ -16,6 +17,13 @@ import com.comunidadedevspace.taskbeats.R
  */
 class TaskListFragment : Fragment() {
 
+    private lateinit var ctnContent: LinearLayout
+
+    //Adapter
+    private val adapter: TaskListAdapter by lazy {
+        TaskListAdapter(::openTaskListDetail)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +31,13 @@ class TaskListFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_task_list, container, false)
+    }
+
+
+
+    private fun openTaskListDetail(task: Task?) {
+        val intent = TaskDetailActivity.start(requireContext(), task)
+        requireActivity().startActivity(intent)
     }
 
     companion object {
