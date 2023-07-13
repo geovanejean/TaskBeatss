@@ -36,8 +36,6 @@ class TaskListActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             val taskAction = data?.getSerializableExtra(TASK_ACTION_RESULT) as TaskAction
-
-            viewModel.execute(taskAction)
         }
     }
 
@@ -77,7 +75,6 @@ class TaskListActivity : AppCompatActivity() {
 
     private fun deleteAll(){
         val taskAction = TaskAction(null, ActionType.DELETE_ALL.name)
-        viewModel.execute(taskAction)
     }
 
     private fun listFromDataBase(){

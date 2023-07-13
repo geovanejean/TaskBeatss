@@ -1,6 +1,5 @@
 package com.comunidadedevspace.taskbeats.presentation
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +9,12 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.comunidadedevspace.taskbeats.R
+import com.comunidadedevspace.taskbeats.TaskBeatsApplication
 import com.comunidadedevspace.taskbeats.data.Task
 import com.google.android.material.snackbar.Snackbar
 
@@ -19,6 +22,17 @@ class TaskDetailActivity : AppCompatActivity() {
 
     private var task: Task? = null
     private lateinit var btnDone: Button
+
+    val dataBaseInstance by lazy { (application as TaskBeatsApplication).getAppDataBase()
+    }
+    val dao by lazy {  dataBaseInstance.taskDao() }
+    private val factory = object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return TaskDetailViewModel(dao) as T
+         }
+    }
+
+    private val viewModel: TaskDetailViewModel by viewModels{ factory }
 
     companion object{
        private const val TASK_DETAIL_EXTRA = "task.title.extra.detail"
@@ -62,20 +76,11 @@ class TaskDetailActivity : AppCompatActivity() {
                     addOrUpdateTask(0, title, desc, ActionType.CREATE)
                 }else{
                     addOrUpdateTask(task!!.id, title, desc, ActionType.UPDATE)
-
                 }
             }else{
                showMessage(it, "Preencha os campos")
-
             }
         }
-
-
-        //Recuperar campo do XML
-        //tvTitle = findViewById(R.id.tv_task_title_detail)
-
-        // Setar um novo texto na tela
-        //tvTitle.text = task?.title ?: "Adicione uma tarefa"
     }
 
 
@@ -113,12 +118,8 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     private fun returnAction(task: Task, actionType: ActionType){
-        val intent = Intent()
-            .apply{
-                val taskAction = TaskAction(task, actionType.name)
-                putExtra(TASK_ACTION_RESULT, taskAction)
-            }
-        setResult(Activity.RESULT_OK, intent)
+        val taskAction = TaskAction(task, actionType.name)
+        viewModel.execute(taskAction)
         finish()
     }
 
