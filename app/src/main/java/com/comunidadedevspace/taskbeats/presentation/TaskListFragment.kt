@@ -35,7 +35,7 @@ class TaskListFragment : Fragment() {
 
 
 
-    private fun openTaskListDetail(task: Task?) {
+    private fun openTaskListDetail(task: Task) {
         val intent = TaskDetailActivity.start(requireContext(), task)
         requireActivity().startActivity(intent)
     }
