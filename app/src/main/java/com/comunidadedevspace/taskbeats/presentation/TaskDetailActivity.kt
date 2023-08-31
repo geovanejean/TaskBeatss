@@ -11,10 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.comunidadedevspace.taskbeats.R
-import com.comunidadedevspace.taskbeats.TaskBeatsApplication
 import com.comunidadedevspace.taskbeats.data.Task
 import com.google.android.material.snackbar.Snackbar
 
@@ -23,16 +20,9 @@ class TaskDetailActivity : AppCompatActivity() {
     private var task: Task? = null
     private lateinit var btnDone: Button
 
-    val dataBaseInstance by lazy { (application as TaskBeatsApplication).getAppDataBase()
-    }
-    val dao by lazy {  dataBaseInstance.taskDao() }
-    private val factory = object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return TaskDetailViewModel(dao) as T
-         }
-    }
-
-    private val viewModel: TaskDetailViewModel by viewModels{ factory }
+      private val viewModel: TaskDetailViewModel by viewModels {
+          TaskDetailViewModel. getVMFactory(application)
+      }
 
     companion object{
        private const val TASK_DETAIL_EXTRA = "task.title.extra.detail"
@@ -91,7 +81,7 @@ class TaskDetailActivity : AppCompatActivity() {
         actionType: ActionType
     ){
         val task = Task(id, title, description)
-        returnAction(task, actionType)
+        performAction(task, actionType)
     }
 
 
@@ -105,7 +95,7 @@ class TaskDetailActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.delete_task -> {
                 if (task!= null) {
-                    returnAction(task!!, ActionType.DELETE)
+                    performAction(task!!, ActionType.DELETE)
                 }else{
                     showMessage(btnDone,"Item not found")
                 }
@@ -117,7 +107,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
     }
 
-    private fun returnAction(task: Task, actionType: ActionType){
+    private fun performAction(task: Task, actionType: ActionType){
         val taskAction = TaskAction(task, actionType.name)
         viewModel.execute(taskAction)
         finish()

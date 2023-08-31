@@ -23,7 +23,6 @@ class TaskDetailViewModel(
             ActionType.DELETE.name -> deleteById(taskAction.task!!.id)
             ActionType.CREATE.name -> insertIntoDataBase(taskAction.task!!)
             ActionType.UPDATE.name -> updateIntoDataBase(taskAction.task!!)
-            ActionType.DELETE_ALL.name -> deleteAll()
         }
     }
 
@@ -45,11 +44,6 @@ class TaskDetailViewModel(
         }
     }
 
-    private fun deleteAll(){
-        viewModelScope.launch(Dispatchers.IO)  {
-            taskDao.deleteAll()
-        }
-    }
 
     companion object{
         fun getVMFactory(application: Application): ViewModelProvider.Factory {
