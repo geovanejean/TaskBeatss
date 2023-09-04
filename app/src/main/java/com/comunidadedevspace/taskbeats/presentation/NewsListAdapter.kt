@@ -36,13 +36,9 @@ class NewsListAdapter: ListAdapter<News, NewsListViewHolder> (NewsListAdapter) {
             return oldItem.title == newItem.title &&
                     oldItem.imgUrl == newItem.imgUrl
         }
-
     }
 
-
-
 }
-
 
 class NewsListViewHolder(
     private val view: View
@@ -55,7 +51,7 @@ class NewsListViewHolder(
         news: News
     ){
         tvTitle.text = news.title
-        imgNews.load("imgUrl")
+        imgNews.load(news.imgUrl)
     }
 
 }
